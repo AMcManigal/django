@@ -210,13 +210,14 @@ class DatabaseSchemaEditor(BaseDatabaseSchemaEditor):
         if old_is_auto and new_is_serial:
             column = strip_quotes(new_field.column)
             data_type = self.serial_field_types[new_internal_type]
-            fragment, _ = super()._alter_column_type_sql(
+            fragment, other_actions = super()._alter_column_type_sql(
                 model, old_field, new_field, data_type, old_collation, new_collation
             )
 
             return (
                 fragment,
-                [
+                other_actions
+                + [
                     (self._drop_identity_sql(table, column), []),
                     (self._create_sequence_sql(table, column, data_type), []),
                     (self._reset_sequence_sql(table, column), []),
@@ -227,13 +228,14 @@ class DatabaseSchemaEditor(BaseDatabaseSchemaEditor):
             column = strip_quotes(new_field.column)
             sequence_name = self._get_sequence_name(table, column)
             data_type = auto_field_types[new_internal_type]
-            fragment, _ = super()._alter_column_type_sql(
+            fragment, other_actions = super()._alter_column_type_sql(
                 model, old_field, new_field, data_type, old_collation, new_collation
             )
 
             return (
                 fragment,
-                [
+                other_actions
+                + [
                     (self._drop_default_sql(table, column), []),
                     (self._delete_sequence_sql(sequence_name), []),
                     (self._add_identity_sql(table, column), []),
@@ -287,13 +289,14 @@ class DatabaseSchemaEditor(BaseDatabaseSchemaEditor):
         elif new_is_serial and not old_is_serial:
             column = strip_quotes(new_field.column)
             data_type = self.serial_field_types[new_internal_type]
-            fragment, _ = super()._alter_column_type_sql(
+            fragment, other_actions = super()._alter_column_type_sql(
                 model, old_field, new_field, data_type, old_collation, new_collation
             )
 
             return (
                 fragment,
-                [
+                other_actions
+                + [
                     (self._create_sequence_sql(table, column, data_type), []),
                     (self._reset_sequence_sql(table, column), []),
                     (self._set_default_sequence_sql(table, column), []),
@@ -302,13 +305,14 @@ class DatabaseSchemaEditor(BaseDatabaseSchemaEditor):
         elif old_is_serial and not new_is_serial:
             column = strip_quotes(new_field.column)
             sequence_name = self._get_sequence_name(table, column)
-            fragment, _ = super()._alter_column_type_sql(
+            fragment, other_actions = super()._alter_column_type_sql(
                 model, old_field, new_field, new_type, old_collation, new_collation
             )
 
             return (
                 fragment,
-                [
+                other_actions
+                + [
                     (self._drop_default_sql(table, column), []),
                     (self._delete_sequence_sql(sequence_name), []),
                 ],
@@ -317,13 +321,14 @@ class DatabaseSchemaEditor(BaseDatabaseSchemaEditor):
             column = strip_quotes(new_field.column)
             sequence_name = self._get_sequence_name(table, column)
             data_type = self.serial_field_types[new_internal_type]
-            fragment, _ = super()._alter_column_type_sql(
+            fragment, other_actions = super()._alter_column_type_sql(
                 model, old_field, new_field, data_type, old_collation, new_collation
             )
 
             return (
                 fragment,
-                [
+                other_actions
+                + [
                     (self._alter_sequence_type_sql(sequence_name, data_type), []),
                 ],
             )
