@@ -32,7 +32,7 @@ class SerialFieldMixin:
                 checks.Error(
                     "SerialFields do not accept null values.",
                     obj=self,
-                    id="fields.E910",
+                    id="fields.E013",
                 ),
             ]
         else:
@@ -45,7 +45,7 @@ class SerialFieldMixin:
             checks.Error(
                 "SerialFields do not accept default values.",
                 obj=self,
-                id="fields.E911",
+                id="fields.E014",
             ),
         ]
 

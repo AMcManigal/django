@@ -180,6 +180,8 @@ Model fields
 * **fields.E011**: ``<database>`` does not support default database values with
   expressions (``db_default``).
 * **fields.E012**: ``<expression>`` cannot be used in ``db_default``.
+* **fields.E013**: ``<field>`` does not accept null values.
+* **fields.E014**: ``<field>`` does not accept default values.
 * **fields.E100**: ``AutoField``\s must set primary_key=True.
 * **fields.E110**: ``BooleanField``\s do not accept null values. *This check
   appeared before support for null values was added in Django 2.1.*
@@ -252,8 +254,6 @@ Model fields
   in Django 5.1. *This check appeared in Django 4.2 and 5.0*.
 * **fields.E907**: ``django.contrib.postgres.fields.CITextField`` is removed
   except for support for historical migrations.
-* **fields.E910**: ``SerialField``\s do not accept null values.
-* **fields.E911**: ``SerialField``\s do not accept default values.
 
 File fields
 ~~~~~~~~~~~

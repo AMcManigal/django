@@ -31,7 +31,7 @@ class SerialFieldModelTests(PostgreSQLTestCase):
             Error(
                 "SerialFields do not accept null values.",
                 obj=field,
-                id="fields.E910",
+                id="fields.E013",
             ),
         ]
         self.assertEqual(errors, expected)
@@ -46,7 +46,7 @@ class SerialFieldModelTests(PostgreSQLTestCase):
             Error(
                 "SerialFields do not accept default values.",
                 obj=field,
-                id="fields.E911",
+                id="fields.E014",
             )
         ]
         self.assertEqual(errors, expected)
