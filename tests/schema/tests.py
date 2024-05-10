@@ -6044,6 +6044,48 @@ class SchemaTests(TransactionTestCase):
     @unittest.skipUnless(connection.vendor == "postgresql", "PostgreSQL specific")
     @isolate_apps("schema")
     @tag("serial")
+    def test_auto_field_to_serial_pre_41(self):
+        from django.contrib.postgres.fields import SerialField
+
+        class Foo(Model):
+            class Meta:
+                app_label = "schema"
+
+        self.isolated_local_models = [Foo]
+
+        with connection.schema_editor() as editor:
+            editor.create_model(Foo)
+            # pre-Django 4.1, auto fields used serial fields
+            table = Foo._meta.db_table
+            editor._drop_identity(table, "id")
+            editor._create_sequence(table, "id", "integer")
+            editor._set_default_sequence(table, "id")
+
+        obj = Foo.objects.create()
+        self.assertEqual(obj.id, 1)
+
+        self.assertColumns(Foo, {"id": "SerialField"})
+        sequences = self.assertSequences(Foo, ["id"])
+        self.assertSequence(sequences[0], SerialField, 1)
+
+        old_field = Foo._meta.get_field("id")
+        new_field = SerialField(primary_key=True)
+        new_field.model = Foo
+        new_field.set_attributes_from_name("id")
+
+        with connection.schema_editor() as editor:
+            editor.alter_field(Foo, old_field, new_field, strict=True)
+
+        obj = Foo.objects.create()
+        self.assertEqual(obj.id, 2)
+
+        self.assertColumns(Foo, {"id": "SerialField"})
+        sequences = self.assertSequences(Foo, ["id"])
+        self.assertSequence(sequences[0], SerialField, 2)
+
+    @unittest.skipUnless(connection.vendor == "postgresql", "PostgreSQL specific")
+    @isolate_apps("schema")
+    @tag("serial")
     def test_serial_to_auto_field(self):
         from django.contrib.postgres.fields import SerialField
 

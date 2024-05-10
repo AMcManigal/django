@@ -480,6 +480,9 @@ class DatabaseSchemaEditor(BaseDatabaseSchemaEditor):
             "column": self.quote_name(column),
         }
 
+    def _create_sequence(self, table, column, data_type):
+        self.execute(self._create_sequence_sql(table, column, data_type))
+
     def _create_sequence_sql(self, table, column, data_type):
         return self.sql_create_sequence % {
             "sequence": self.quote_name(f"{table}_{column}_seq"),
@@ -496,6 +499,9 @@ class DatabaseSchemaEditor(BaseDatabaseSchemaEditor):
             self.quote_name(column),
             self.quote_name(table),
         )
+
+    def _set_default_sequence(self, table, column):
+        self.execute(self._set_default_sequence_sql(table, column))
 
     def _set_default_sequence_sql(self, table, column):
         return self.sql_set_default_sequence % (
