@@ -50,11 +50,11 @@ class DatabaseIntrospection(BaseDatabaseIntrospection):
                 return "SmallAutoField"
         elif description.default and "nextval" in description.default:
             if field_type == "IntegerField":
-                return "SerialField"
+                return "postgres.fields.SerialField"
             elif field_type == "BigIntegerField":
-                return "BigSerialField"
+                return "postgres.fields.BigSerialField"
             elif field_type == "SmallIntegerField":
-                return "SmallSerialField"
+                return "postgres.fields.SmallSerialField"
 
         return field_type
 

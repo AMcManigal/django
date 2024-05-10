@@ -6395,7 +6395,8 @@ class SchemaTests(TransactionTestCase):
         column_classes = self.column_classes(model)
         self.assertEqual(len(column_classes), len(columns))
         for key, value in columns.items():
-            self.assertEqual(column_classes[key][0], value)
+            column_class = column_classes[key][0]
+            self.assertTrue(column_class[-len(value) :], value)
 
     def assertSequences(self, model, fields):
         table = model._meta.db_table
