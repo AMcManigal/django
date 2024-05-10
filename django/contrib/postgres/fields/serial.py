@@ -6,17 +6,12 @@ from django.utils.translation import gettext_lazy as _
 
 __all__ = ("BigSerialField", "SmallSerialField", "SerialField")
 
-SERIAL_FIELD_FLAG = "38UIvRvC6xSOihIy4idv"
-
 
 class SerialFieldMixin:
     db_returning = True
 
     def __init__(self, *args, **kwargs):
         kwargs["blank"] = True
-        # To differentiate between old serial fields (AutoFields pre-Django 4.1)
-        # and new serial fields (SerialFields) on introspection, use a db_comment.
-        kwargs["db_comment"] = SERIAL_FIELD_FLAG
         super().__init__(*args, **kwargs)
 
     def deconstruct(self):
