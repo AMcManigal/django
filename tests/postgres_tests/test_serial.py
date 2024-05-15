@@ -51,6 +51,21 @@ class SerialFieldModelTests(PostgreSQLTestCase):
         ]
         self.assertEqual(errors, expected)
 
+    def test_db_default_check(self):
+        class Model(models.Model):
+            serial = SerialField(db_default=1)
+
+        field = Model._meta.get_field("serial")
+        errors = field.check()
+        expected = [
+            Error(
+                "SerialFields do not accept default database values.",
+                obj=field,
+                id="fields.E015",
+            )
+        ]
+        self.assertEqual(errors, expected)
+
     def test_db_types(self):
         class Model(models.Model):
             small_serial = SmallSerialField()

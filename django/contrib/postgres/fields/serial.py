@@ -24,6 +24,7 @@ class SerialFieldMixin:
             *super().check(**kwargs),
             *self._check_not_null(),
             *self._check_default(),
+            *self._check_database_default(),
         ]
 
     def _check_not_null(self):
@@ -46,6 +47,17 @@ class SerialFieldMixin:
                 "SerialFields do not accept default values.",
                 obj=self,
                 id="fields.E014",
+            ),
+        ]
+
+    def _check_database_default(self):
+        if self.db_default is NOT_PROVIDED:
+            return []
+        return [
+            checks.Error(
+                "SerialFields do not accept default database values.",
+                obj=self,
+                id="fields.E015",
             ),
         ]
 
