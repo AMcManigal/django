@@ -6057,9 +6057,9 @@ class SchemaTests(TransactionTestCase):
             editor.create_model(Foo)
             # pre-Django 4.1, auto fields used serial fields
             table = Foo._meta.db_table
-            editor._drop_identity(table, "id")
-            editor._create_sequence(table, "id", "integer")
-            editor._set_default_sequence(table, "id")
+            editor.execute(editor._drop_identity_sql(table, "id"))
+            editor.execute(editor._create_sequence_sql(table, "id", "integer"))
+            editor.execute(editor._set_default_sequence_sql(table, "id"))
 
         obj = Foo.objects.create()
         self.assertEqual(obj.id, 1)

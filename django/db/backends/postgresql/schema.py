@@ -259,7 +259,7 @@ class DatabaseSchemaEditor(BaseDatabaseSchemaEditor):
         elif old_is_auto and not new_is_auto:
             # Drop IDENTITY if exists (pre-Django 4.1 serial columns don't have
             # it).
-            self._drop_identity(table, column)
+            self.execute(self._drop_identity_sql(table, column))
             fragment, _ = super()._alter_column_type_sql(
                 model, old_field, new_field, new_type, old_collation, new_collation
             )
@@ -464,17 +464,11 @@ class DatabaseSchemaEditor(BaseDatabaseSchemaEditor):
             "column": self.quote_name(column),
         }
 
-    def _drop_identity(self, table, column):
-        self.execute(self._drop_identity_sql(table, column))
-
     def _drop_identity_sql(self, table, column):
         return self.sql_drop_indentity % {
             "table": self.quote_name(table),
             "column": self.quote_name(column),
         }
-
-    def _create_sequence(self, table, column, data_type):
-        self.execute(self._create_sequence_sql(table, column, data_type))
 
     def _create_sequence_sql(self, table, column, data_type):
         return self.sql_create_sequence % {
@@ -492,9 +486,6 @@ class DatabaseSchemaEditor(BaseDatabaseSchemaEditor):
             self.quote_name(column),
             self.quote_name(table),
         )
-
-    def _set_default_sequence(self, table, column):
-        self.execute(self._set_default_sequence_sql(table, column))
 
     def _set_default_sequence_sql(self, table, column):
         return self.sql_set_default_sequence % (
