@@ -123,6 +123,13 @@ class Command(BaseCommand):
                     yield "# The error was: %s" % e
                     continue
 
+                def is_postgres_row(row):
+                    field_type, _, _ = self.get_field_type(connection, table_name, row)
+                    return field_type.startswith("postgres.fields.")
+
+                if any(is_postgres_row(row) for row in table_description):
+                    yield "from django.contrib import postgres"
+
                 model_name = self.normalize_table_name(table_name)
                 yield ""
                 yield ""
@@ -362,6 +369,16 @@ class Command(BaseCommand):
             else:
                 field_params["max_digits"] = row.precision
                 field_params["decimal_places"] = row.scale
+
+        serial_fields = {
+            "postgres.fields.SerialField": "AutoField",
+            "postgres.fields.SmallSerialField": "SmallAutoField",
+            "postgres.fields.BigSerialField": "BigAutoField",
+        }
+
+        if connection.vendor == "postgresql" and field_type in serial_fields:
+            auto_field = serial_fields[field_type]
+            field_notes.append(f"You may want to consider using {auto_field} instead.")
 
         return field_type, field_params, field_notes
 

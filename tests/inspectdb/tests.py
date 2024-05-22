@@ -66,7 +66,9 @@ class InspectDBTestCase(TestCase):
         output = out.getvalue()
 
         def assertFieldType(name, definition):
-            out_def = re.search(r"^\s*%s = (models.*)$" % name, output, re.MULTILINE)[1]
+            out_def = re.search(
+                r"^\s*%s = ((models|postgres.fields).*)$" % name, output, re.MULTILINE
+            )[1]
             self.assertEqual(definition, out_def)
 
         return assertFieldType
@@ -245,6 +247,13 @@ class InspectDBTestCase(TestCase):
             "small_int_field",
             "models.%s()" % introspected_field_types["SmallIntegerField"],
         )
+
+        if connection.vendor == "postgresql":
+            assertFieldType(
+                "serial_field",
+                "postgres.fields.SerialField()  "
+                "# You may want to consider using AutoField instead.",
+            )
 
     @skipUnlessDBFeature("can_introspect_foreign_keys")
     def test_attribute_name_not_python_keyword(self):
