@@ -1,3 +1,4 @@
+from django.contrib import postgres
 from django.db import connection, models
 from django.db.models.functions import Lower
 from django.utils.functional import SimpleLazyObject
@@ -82,6 +83,8 @@ class ColumnTypes(models.Model):
     time_field = models.TimeField()
     url_field = models.URLField()
     uuid_field = models.UUIDField()
+    if connection.vendor == "postgresql":
+        serial_field = postgres.fields.SerialField()
 
 
 class JSONFieldColumnType(models.Model):
